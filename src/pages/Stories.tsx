@@ -15,6 +15,7 @@ export function StoriesPage() {
   const [comments, setComments] = useState<Record<string, Comment[]>>({});
   const [newComments, setNewComments] = useState<Record<string, string>>({});
   const [expandedStories, setExpandedStories] = useState<Set<string>>(new Set());
+  const [expandedContent, setExpandedContent] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [submittingComments, setSubmittingComments] = useState<Set<string>>(new Set());
   const { user } = useAuth();
@@ -138,6 +139,23 @@ export function StoriesPage() {
     }
   };
 
+  const toggleContentExpansion = (storyId: string) => {
+    setExpandedContent(prev => {
+      const next = new Set(prev);
+      if (next.has(storyId)) {
+        next.delete(storyId);
+      } else {
+        next.add(storyId);
+      }
+      return next;
+    });
+  };
+
+  const getStoryPreview = (content: string, maxLength: number = 200) => {
+    if (content.length <= maxLength) return content;
+    return content.substring(0, maxLength) + '...';
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -190,8 +208,12 @@ export function StoriesPage() {
             <Card key={story.id}>
               <CardHeader>
                 <div className="flex justify-between items-start">
-                  <div className="space-y-2">
-                    <CardTitle className="text-xl">{story.title}</CardTitle>
+                  <div className="space-y-2 flex-1">
+                    <Link to={`/story/${story.id}`}>
+                      <CardTitle className="text-xl hover:text-blog-primary transition-colors cursor-pointer">
+                        {story.title}
+                      </CardTitle>
+                    </Link>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <User className="w-4 h-4" />
@@ -206,7 +228,34 @@ export function StoriesPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700 whitespace-pre-wrap mb-4">{story.content}</p>
+                <div className="mb-4">
+                  <p className="text-foreground whitespace-pre-wrap">
+                    {expandedContent.has(story.id) ? story.content : getStoryPreview(story.content)}
+                  </p>
+                  {story.content.length > 200 && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <Button
+                        variant="link"
+                        size="sm"
+                        onClick={() => toggleContentExpansion(story.id)}
+                        className="p-0 h-auto text-blog-primary hover:text-blog-accent"
+                      >
+                        {expandedContent.has(story.id) ? 'Show less' : 'Read more'}
+                      </Button>
+                      {!expandedContent.has(story.id) && (
+                        <span className="text-muted-foreground">•</span>
+                      )}
+                      {!expandedContent.has(story.id) && (
+                        <Link 
+                          to={`/story/${story.id}`}
+                          className="text-blog-primary hover:text-blog-accent text-sm"
+                        >
+                          View full story →
+                        </Link>
+                      )}
+                    </div>
+                  )}
+                </div>
                 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -264,7 +313,7 @@ export function StoriesPage() {
                     {/* Comments list */}
                     <div className="space-y-3">
                       {comments[story.id]?.map((comment) => (
-                        <div key={comment.id} className="bg-gray-50 rounded-lg p-3">
+                        <div key={comment.id} className="bg-muted/50 dark:bg-blog-surface-elevated rounded-lg p-3 border border-border">
                           <div className="flex items-center justify-between mb-2">
                             <Badge variant="secondary" className="text-xs">
                               {comment.user_name}
@@ -273,7 +322,7 @@ export function StoriesPage() {
                               {formatDate(comment.created_at)}
                             </span>
                           </div>
-                          <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                          <p className="text-sm text-foreground whitespace-pre-wrap">
                             {comment.content}
                           </p>
                         </div>

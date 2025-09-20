@@ -14,6 +14,7 @@ const SignInForm = lazy(() => import("@/components/auth/SignInForm").then(module
 const SignUpForm = lazy(() => import("@/components/auth/SignUpForm").then(module => ({ default: module.SignUpForm })));
 const StoriesPage = lazy(() => import("./pages/Stories").then(module => ({ default: module.StoriesPage })));
 const CreateStory = lazy(() => import("./pages/CreateStory").then(module => ({ default: module.CreateStory })));
+const StoryDetail = lazy(() => import("./pages/StoryDetail").then(module => ({ default: module.StoryDetail })));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
@@ -56,6 +57,11 @@ const App = () => (
               <Route path="/create-story" element={
                 <AppLayout>
                   <CreateStory />
+                </AppLayout>
+              } />
+              <Route path="/story/:id" element={
+                <AppLayout>
+                  <StoryDetail />
                 </AppLayout>
               } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
