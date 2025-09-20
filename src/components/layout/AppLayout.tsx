@@ -48,6 +48,23 @@ export function AppLayout({ children }: AppLayoutProps) {
           <div className="container mx-auto p-6 max-w-7xl">
             {children}
           </div>
+          
+          {/* Footer */}
+          <footer className="border-t border-border bg-blog-surface-elevated/50 backdrop-blur-sm">
+            <div className="container mx-auto px-6 py-4 max-w-7xl">
+              <div className="text-center text-sm text-muted-foreground">
+                Made with ❤️ by{" "}
+                <a 
+                  href="https://github.com/jayadevvasudevan" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blog-primary hover:text-blog-accent transition-colors font-medium"
+                >
+                  jayadev
+                </a>
+              </div>
+            </div>
+          </footer>
         </main>
       </div>
     </SidebarProvider>
