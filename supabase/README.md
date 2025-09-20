@@ -29,7 +29,7 @@
 ### Step 5: Verify Setup (Optional)
 1. Create another new query
 2. Copy and paste content from `test.sql`
-3. Click **Run** to verify tables were created
+3. Click **Run** to verify tables were createdd
 
 ## Important Changes
 
