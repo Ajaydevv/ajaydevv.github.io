@@ -102,21 +102,33 @@ export const storiesService = {
     };
   },
 
-  // Create a new story
+  // Create a new story with timeout
   async createStory(data: CreateStoryData, userId: string, userName: string): Promise<Story> {
-    const { data: story, error } = await supabase
-      .from('stories')
-      .insert({
-        title: data.title,
-        content: data.content,
-        author_id: userId,
-        author_name: userName,
-      })
-      .select()
-      .single();
+    try {
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Story creation timeout')), 20000)
+      );
+      
+      const createPromise = supabase
+        .from('stories')
+        .insert({
+          title: data.title,
+          content: data.content,
+          author_id: userId,
+          author_name: userName,
+        })
+        .select()
+        .single();
+      
+      const { data: story, error } = await Promise.race([createPromise, timeoutPromise]);
 
-    if (error) throw error;
-    return story;
+      if (error) throw error;
+      return story;
+    } catch (error) {
+      console.error('Error creating story:', error);
+      throw error;
+    }
   },
 
   // Update a story

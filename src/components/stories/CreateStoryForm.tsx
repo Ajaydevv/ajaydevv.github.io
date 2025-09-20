@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { storiesService } from '@/lib/database';
 import { profilesService } from '@/lib/profiles';
 import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 export function CreateStoryForm() {
   const [title, setTitle] = useState('');
@@ -24,11 +25,19 @@ export function CreateStoryForm() {
     const checkAdminStatus = async () => {
       if (user) {
         try {
-          const adminStatus = await profilesService.isUserAdmin(user.id);
+          // Add timeout to prevent hanging
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Admin check timeout')), 10000)
+          );
+          
+          const adminPromise = profilesService.isUserAdmin(user.id);
+          
+          const adminStatus = await Promise.race([adminPromise, timeoutPromise]) as boolean;
           setIsUserAdmin(adminStatus);
         } catch (error) {
           console.error('Error checking admin status:', error);
           setIsUserAdmin(false);
+          toast.error('Failed to verify admin status. Please try again.');
         }
       }
       setIsCheckingAdmin(false);
@@ -58,17 +67,28 @@ export function CreateStoryForm() {
     setIsSubmitting(true);
 
     try {
-      await storiesService.createStory(
+      // Add timeout to prevent hanging on story creation
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Story creation timeout')), 30000)
+      );
+      
+      const createPromise = storiesService.createStory(
         { title: title.trim(), content: content.trim() },
         user.id,
         user.name
       );
       
+      await Promise.race([createPromise, timeoutPromise]);
+      
       toast.success('Story created successfully!');
       navigate('/stories');
     } catch (error) {
       console.error('Error creating story:', error);
-      toast.error('Failed to create story. Only administrators can create stories.');
+      if (error instanceof Error && error.message === 'Story creation timeout') {
+        toast.error('Story creation is taking too long. Please try again.');
+      } else {
+        toast.error('Failed to create story. Please check your connection and try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -81,6 +101,10 @@ export function CreateStoryForm() {
           <CardTitle>Create a Story</CardTitle>
           <CardDescription>Checking permissions...</CardDescription>
         </CardHeader>
+        <CardContent className="flex items-center justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span className="ml-2 text-muted-foreground">Verifying admin access...</span>
+        </CardContent>
       </Card>
     );
   }
@@ -151,6 +175,7 @@ export function CreateStoryForm() {
           
           <div className="flex gap-2">
             <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
               {isSubmitting ? 'Creating...' : 'Create Story'}
             </Button>
             <Button 

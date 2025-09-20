@@ -36,22 +36,43 @@ export function useAuthProvider(): AuthContextType {
 
   // Get initial session and user role
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (session?.user) {
-        const userWithRole = await mapSupabaseUser(session.user);
-        setUser(userWithRole);
+    const initializeAuth = async () => {
+      try {
+        // Add timeout to prevent hanging
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Auth initialization timeout')), 15000)
+        );
+        
+        const sessionPromise = supabase.auth.getSession().then(async ({ data: { session } }) => {
+          if (session?.user) {
+            const userWithRole = await mapSupabaseUser(session.user);
+            setUser(userWithRole);
+          }
+        });
+        
+        await Promise.race([sessionPromise, timeoutPromise]);
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    });
+    };
+
+    initializeAuth();
 
     // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session?.user) {
-        const userWithRole = await mapSupabaseUser(session.user);
-        setUser(userWithRole);
-      } else {
+      try {
+        if (session?.user) {
+          const userWithRole = await mapSupabaseUser(session.user);
+          setUser(userWithRole);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Auth state change error:', error);
         setUser(null);
       }
       setIsLoading(false);
@@ -61,20 +82,38 @@ export function useAuthProvider(): AuthContextType {
   }, []);
 
   const mapSupabaseUser = async (supabaseUser: SupabaseUser): Promise<User> => {
-    // Get user profile with admin status from database
-    const { data: profileData } = await supabase
-      .from('profiles')
-      .select('is_admin, full_name, avatar_url')
-      .eq('id', supabaseUser.id)
-      .single();
+    try {
+      // Add timeout to prevent hanging on profile fetch
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 10000)
+      );
+      
+      const profilePromise = supabase
+        .from('profiles')
+        .select('is_admin, full_name, avatar_url')
+        .eq('id', supabaseUser.id)
+        .single();
+      
+      const { data: profileData } = await Promise.race([profilePromise, timeoutPromise]) as any;
 
-    return {
-      id: supabaseUser.id,
-      email: supabaseUser.email || '',
-      role: profileData?.is_admin ? 'admin' : 'user',
-      name: profileData?.full_name || supabaseUser.user_metadata?.full_name || supabaseUser.email?.split('@')[0] || 'User',
-      avatar: profileData?.avatar_url || supabaseUser.user_metadata?.avatar_url,
-    };
+      return {
+        id: supabaseUser.id,
+        email: supabaseUser.email || '',
+        role: profileData?.is_admin ? 'admin' : 'user',
+        name: profileData?.full_name || supabaseUser.user_metadata?.full_name || supabaseUser.email?.split('@')[0] || 'User',
+        avatar: profileData?.avatar_url || supabaseUser.user_metadata?.avatar_url,
+      };
+    } catch (error) {
+      console.error('Error mapping user:', error);
+      // Return basic user info if profile fetch fails
+      return {
+        id: supabaseUser.id,
+        email: supabaseUser.email || '',
+        role: 'user',
+        name: supabaseUser.user_metadata?.full_name || supabaseUser.email?.split('@')[0] || 'User',
+        avatar: supabaseUser.user_metadata?.avatar_url,
+      };
+    }
   };
 
   const signIn = async (email: string, password: string) => {

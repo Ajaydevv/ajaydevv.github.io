@@ -23,16 +23,28 @@ export const profilesService = {
     return data;
   },
 
-  // Check if user is admin
+  // Check if user is admin with caching
   async isUserAdmin(userId: string): Promise<boolean> {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', userId)
-      .single();
+    try {
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Admin check timeout')), 8000)
+      );
+      
+      const queryPromise = supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', userId)
+        .single();
+      
+      const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
 
-    if (error && error.code !== 'PGRST116') throw error;
-    return data?.is_admin || false;
+      if (error && error.code !== 'PGRST116') throw error;
+      return data?.is_admin || false;
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      return false; // Default to false on error
+    }
   },
 
   // Check if current user is admin

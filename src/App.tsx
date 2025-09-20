@@ -5,14 +5,32 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { AppLayout } from "@/components/layout/AppLayout";
-import Home from "./pages/Home";
-import { SignInForm } from "@/components/auth/SignInForm";
-import { SignUpForm } from "@/components/auth/SignUpForm";
-import { StoriesPage } from "./pages/Stories";
-import { CreateStory } from "./pages/CreateStory";
-import NotFound from "./pages/NotFound";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { Suspense, lazy } from "react";
 
-const queryClient = new QueryClient();
+// Lazy load components for better performance
+const Home = lazy(() => import("./pages/Home"));
+const SignInForm = lazy(() => import("@/components/auth/SignInForm").then(module => ({ default: module.SignInForm })));
+const SignUpForm = lazy(() => import("@/components/auth/SignUpForm").then(module => ({ default: module.SignUpForm })));
+const StoriesPage = lazy(() => import("./pages/Stories").then(module => ({ default: module.StoriesPage })));
+const CreateStory = lazy(() => import("./pages/CreateStory").then(module => ({ default: module.CreateStory })));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 2,
+    },
+  },
+});
+
+// Loading fallback component
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <LoadingSpinner size="lg" text="Loading..." />
+  </div>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -21,27 +39,29 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/auth/signin" element={<SignInForm />} />
-            <Route path="/auth/signup" element={<SignUpForm />} />
-            <Route path="/" element={
-              <AppLayout>
-                <Home />
-              </AppLayout>
-            } />
-            <Route path="/stories" element={
-              <AppLayout>
-                <StoriesPage />
-              </AppLayout>
-            } />
-            <Route path="/create-story" element={
-              <AppLayout>
-                <CreateStory />
-              </AppLayout>
-            } />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/auth/signin" element={<SignInForm />} />
+              <Route path="/auth/signup" element={<SignUpForm />} />
+              <Route path="/" element={
+                <AppLayout>
+                  <Home />
+                </AppLayout>
+              } />
+              <Route path="/stories" element={
+                <AppLayout>
+                  <StoriesPage />
+                </AppLayout>
+              } />
+              <Route path="/create-story" element={
+                <AppLayout>
+                  <CreateStory />
+                </AppLayout>
+              } />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>
