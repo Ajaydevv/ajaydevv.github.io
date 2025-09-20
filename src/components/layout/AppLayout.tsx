@@ -3,6 +3,7 @@ import { AppSidebar } from "./AppSidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { PenTool } from "lucide-react";
 
 interface AppLayoutProps {
@@ -37,6 +38,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                   Write Story
                 </Button>
               )}
+              <ThemeToggle />
               <UserMenu />
             </div>
           </div>

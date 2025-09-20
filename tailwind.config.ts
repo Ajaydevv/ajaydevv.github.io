@@ -60,8 +60,11 @@ export default {
         blog: {
           primary: "hsl(var(--blog-primary))",
           "primary-foreground": "hsl(var(--blog-primary-foreground))",
+          secondary: "hsl(var(--blog-secondary))",
           accent: "hsl(var(--blog-accent))",
           "accent-foreground": "hsl(var(--blog-accent-foreground))",
+          dark: "hsl(var(--blog-dark))",
+          light: "hsl(var(--blog-light))",
           muted: "hsl(var(--blog-muted))",
           surface: "hsl(var(--blog-surface))",
           "surface-elevated": "hsl(var(--blog-surface-elevated))",

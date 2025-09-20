@@ -8,112 +8,113 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --background: 0 0% 93%;          /* #EEEEEE as light background */
+    --foreground: 210 29% 17%;       /* #222831 as dark text */
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 210 29% 17%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 210 29% 17%;
 
-    --primary: 262 83% 58%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 185 100% 35%;         /* #00ADB5 */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
+    --secondary: 0 0% 93%;           /* #EEEEEE */
+    --secondary-foreground: 210 29% 17%;
 
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
+    --muted: 0 0% 90%;
+    --muted-foreground: 210 15% 50%;
 
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
+    --accent: 185 100% 35%;          /* #00ADB5 */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 262 83% 58%;
+    --border: 0 0% 85%;
+    --input: 0 0% 90%;
+    --ring: 185 100% 35%;
 
-    /* Blog-specific tokens */
-    --blog-primary: 262 83% 58%;
-    --blog-primary-foreground: 210 40% 98%;
-    --blog-accent: 245 58% 51%;
-    --blog-accent-foreground: 210 40% 98%;
-    --blog-muted: 220 14.3% 95.9%;
+    /* New color palette based on your hex codes */
+    --blog-primary: 185 100% 35%;    /* #00ADB5 - Cyan accent */
+    --blog-primary-foreground: 0 0% 100%;
+    --blog-secondary: 210 15% 25%;   /* #393E46 - Medium gray */
+    --blog-accent: 185 100% 35%;     /* #00ADB5 - Cyan accent */
+    --blog-accent-foreground: 0 0% 100%;
+    --blog-dark: 210 29% 17%;        /* #222831 - Dark gray */
+    --blog-light: 0 0% 93%;          /* #EEEEEE - Light gray */
+    --blog-muted: 0 0% 90%;
     --blog-surface: 0 0% 98%;
     --blog-surface-elevated: 0 0% 100%;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--blog-primary)), hsl(var(--blog-accent)));
+    /* Gradients with new colors */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--blog-primary)), hsl(var(--blog-secondary)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--blog-primary)), hsl(var(--blog-light)));
     --gradient-surface: linear-gradient(180deg, hsl(var(--blog-surface)), hsl(var(--background)));
     --gradient-subtle: linear-gradient(135deg, hsl(var(--blog-muted)), hsl(var(--background)));
 
     /* Shadows */
     --shadow-elegant: 0 4px 20px -4px hsl(var(--blog-primary) / 0.15);
-    --shadow-card: 0 2px 8px -2px hsl(220 8.9% 46.1% / 0.1);
+    --shadow-card: 0 2px 8px -2px hsl(210 15% 50% / 0.1);
     --shadow-glow: 0 0 32px hsl(var(--blog-primary) / 0.2);
 
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-foreground: 210 29% 17%;
+    --sidebar-primary: 185 100% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 93%;
+    --sidebar-accent-foreground: 210 29% 17%;
+    --sidebar-border: 0 0% 85%;
+    --sidebar-ring: 185 100% 35%;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    --background: 210 29% 17%;       /* #222831 as dark background */
+    --foreground: 0 0% 93%;          /* #EEEEEE as light text */
 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 210 15% 25%;             /* #393E46 */
+    --card-foreground: 0 0% 93%;
 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 210 15% 25%;
+    --popover-foreground: 0 0% 93%;
 
-    --primary: 262 83% 58%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 185 100% 35%;         /* #00ADB5 */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 210 15% 25%;        /* #393E46 */
+    --secondary-foreground: 0 0% 93%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 210 15% 25%;
+    --muted-foreground: 0 0% 70%;
 
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 185 100% 35%;          /* #00ADB5 */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 0 0% 93%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 262 83% 58%;
+    --border: 210 15% 25%;
+    --input: 210 15% 25%;
+    --ring: 185 100% 35%;
 
-    /* Blog-specific dark tokens */
-    --blog-primary: 262 83% 58%;
-    --blog-primary-foreground: 210 40% 98%;
-    --blog-accent: 245 58% 51%;
-    --blog-accent-foreground: 210 40% 98%;
-    --blog-muted: 240 3.7% 15.9%;
-    --blog-surface: 240 10% 3.9%;
-    --blog-surface-elevated: 240 5.9% 10%;
+    /* Dark theme blog colors */
+    --blog-primary: 185 100% 35%;    /* #00ADB5 - Cyan stays primary */
+    --blog-primary-foreground: 0 0% 100%;
+    --blog-secondary: 0 0% 93%;      /* #EEEEEE - Light gray for secondary */
+    --blog-accent: 185 100% 35%;     /* #00ADB5 - Cyan accent */
+    --blog-accent-foreground: 0 0% 100%;
+    --blog-dark: 210 29% 17%;        /* #222831 - Dark background */
+    --blog-light: 210 15% 25%;       /* #393E46 - Medium gray for elevated surfaces */
+    --blog-muted: 210 15% 25%;
+    --blog-surface: 210 29% 17%;     /* #222831 */
+    --blog-surface-elevated: 210 15% 25%; /* #393E46 */
 
     /* Dark gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--blog-primary)), hsl(var(--blog-accent)));
+    --gradient-primary: linear-gradient(135deg, hsl(var(--blog-primary)), hsl(var(--blog-light)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--blog-primary)), hsl(var(--blog-secondary)));
     --gradient-surface: linear-gradient(180deg, hsl(var(--blog-surface)), hsl(var(--background)));
     --gradient-subtle: linear-gradient(135deg, hsl(var(--blog-muted)), hsl(var(--background)));
 
@@ -121,14 +122,15 @@ All colors MUST be HSL.
     --shadow-elegant: 0 4px 20px -4px hsl(var(--blog-primary) / 0.25);
     --shadow-card: 0 2px 8px -2px hsl(0 0% 0% / 0.3);
     --shadow-glow: 0 0 32px hsl(var(--blog-primary) / 0.3);
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    
+    --sidebar-background: 210 15% 25%;
+    --sidebar-foreground: 0 0% 93%;
+    --sidebar-primary: 185 100% 35%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 210 29% 17%;
+    --sidebar-accent-foreground: 0 0% 93%;
+    --sidebar-border: 210 15% 25%;
+    --sidebar-ring: 185 100% 35%;
   }
 }
 
@@ -146,6 +148,10 @@ All colors MUST be HSL.
   /* Blog-specific utility classes */
   .blog-gradient {
     background: var(--gradient-primary);
+  }
+  
+  .blog-gradient-accent {
+    background: var(--gradient-accent);
   }
   
   .blog-surface {
