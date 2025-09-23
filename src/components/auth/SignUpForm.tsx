@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { ModernButton } from "@/components/ui/modern-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -115,14 +116,15 @@ export function SignUpForm() {
                 )}
               </div>
 
-              <Button 
+              <ModernButton 
                 type="submit" 
-                className="w-full blog-gradient hover:opacity-90 transition-opacity"
+                size="lg"
+                className="w-full"
                 disabled={isLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Create account
-              </Button>
+              </ModernButton>
             </form>
 
             <div className="text-center">

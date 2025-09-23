@@ -2,115 +2,126 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global styles */
+html {
+  background: rgb(6, 0, 16);
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: rgb(6, 0, 16);
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 93%;          /* #EEEEEE as light background */
-    --foreground: 210 29% 17%;       /* #222831 as dark text */
+    --background: 265 100% 3%;       /* rgb(6, 0, 16) - Dark purple background */
+    --foreground: 0 0% 93%;          /* #EEEEEE as light text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 210 29% 17%;
+    --card: 265 60% 8%;              /* Slightly lighter purple for cards */
+    --card-foreground: 0 0% 93%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 210 29% 17%;
+    --popover: 265 60% 8%;
+    --popover-foreground: 0 0% 93%;
 
-    --primary: 185 100% 35%;         /* #00ADB5 */
+    --primary: 265 100% 69%;         /* #8b5fff */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 93%;           /* #EEEEEE */
-    --secondary-foreground: 210 29% 17%;
+    --secondary: 265 60% 8%;         /* Darker purple for secondary */
+    --secondary-foreground: 0 0% 93%;
 
-    --muted: 0 0% 90%;
-    --muted-foreground: 210 15% 50%;
+    --muted: 265 40% 12%;            /* Muted purple */
+    --muted-foreground: 0 0% 70%;
 
-    --accent: 185 100% 35%;          /* #00ADB5 */
+    --accent: 265 100% 69%;          /* #8b5fff */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 85%;
-    --input: 0 0% 90%;
-    --ring: 185 100% 35%;
+    --border: 265 40% 15%;           /* Purple border */
+    --input: 265 40% 12%;            /* Dark purple input */
+    --ring: 265 100% 69%;
 
-    /* New color palette based on your hex codes */
-    --blog-primary: 185 100% 35%;    /* #00ADB5 - Cyan accent */
+    /* Updated color palette for dark purple theme */
+    --blog-primary: 265 100% 69%;    /* #8b5fff - Purple accent */
     --blog-primary-foreground: 0 0% 100%;
-    --blog-secondary: 210 15% 25%;   /* #393E46 - Medium gray */
-    --blog-accent: 185 100% 35%;     /* #00ADB5 - Cyan accent */
+    --blog-secondary: 265 40% 15%;   /* Purple secondary */
+    --blog-accent: 265 100% 69%;     /* #8b5fff - Purple accent */
     --blog-accent-foreground: 0 0% 100%;
-    --blog-dark: 210 29% 17%;        /* #222831 - Dark gray */
-    --blog-light: 0 0% 93%;          /* #EEEEEE - Light gray */
-    --blog-muted: 0 0% 90%;
-    --blog-surface: 0 0% 98%;
-    --blog-surface-elevated: 0 0% 100%;
+    --blog-dark: 265 100% 3%;        /* rgb(6, 0, 16) - Main dark purple */
+    --blog-light: 0 0% 93%;          /* #EEEEEE - Light text */
+    --blog-muted: 265 40% 12%;       /* Muted purple */
+    --blog-surface: 265 60% 5%;      /* Dark purple surface */
+    --blog-surface-elevated: 265 60% 8%; /* Elevated purple surface */
 
-    /* Gradients with new colors */
+    /* Gradients with updated purple colors */
     --gradient-primary: linear-gradient(135deg, hsl(var(--blog-primary)), hsl(var(--blog-secondary)));
     --gradient-accent: linear-gradient(135deg, hsl(var(--blog-primary)), hsl(var(--blog-light)));
     --gradient-surface: linear-gradient(180deg, hsl(var(--blog-surface)), hsl(var(--background)));
     --gradient-subtle: linear-gradient(135deg, hsl(var(--blog-muted)), hsl(var(--background)));
 
-    /* Shadows */
-    --shadow-elegant: 0 4px 20px -4px hsl(var(--blog-primary) / 0.15);
-    --shadow-card: 0 2px 8px -2px hsl(210 15% 50% / 0.1);
-    --shadow-glow: 0 0 32px hsl(var(--blog-primary) / 0.2);
+    /* Dark mode shadows */
+    --shadow-elegant: 0 4px 20px -4px hsl(var(--blog-primary) / 0.25);
+    --shadow-card: 0 2px 8px -2px hsl(0 0% 0% / 0.3);
+    --shadow-glow: 0 0 32px hsl(var(--blog-primary) / 0.3);
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 210 29% 17%;
-    --sidebar-primary: 185 100% 35%;
+    --sidebar-background: 265 60% 8%;
+    --sidebar-foreground: 0 0% 93%;
+    --sidebar-primary: 265 100% 69%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 93%;
-    --sidebar-accent-foreground: 210 29% 17%;
-    --sidebar-border: 0 0% 85%;
-    --sidebar-ring: 185 100% 35%;
+    --sidebar-accent: 265 60% 8%;
+    --sidebar-accent-foreground: 0 0% 93%;
+    --sidebar-border: 265 40% 15%;
+    --sidebar-ring: 265 100% 69%;
   }
 
   .dark {
-    --background: 210 29% 17%;       /* #222831 as dark background */
+    --background: 265 100% 3%;       /* rgb(6, 0, 16) - Dark purple background */
     --foreground: 0 0% 93%;          /* #EEEEEE as light text */
 
-    --card: 210 15% 25%;             /* #393E46 */
+    --card: 265 60% 8%;              /* Slightly lighter purple for cards */
     --card-foreground: 0 0% 93%;
 
-    --popover: 210 15% 25%;
+    --popover: 265 60% 8%;
     --popover-foreground: 0 0% 93%;
 
-    --primary: 185 100% 35%;         /* #00ADB5 */
+    --primary: 265 100% 69%;         /* #8b5fff */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 15% 25%;        /* #393E46 */
+    --secondary: 265 60% 8%;         /* Darker purple for secondary */
     --secondary-foreground: 0 0% 93%;
 
-    --muted: 210 15% 25%;
+    --muted: 265 40% 12%;            /* Muted purple */
     --muted-foreground: 0 0% 70%;
 
-    --accent: 185 100% 35%;          /* #00ADB5 */
+    --accent: 265 100% 69%;          /* #8b5fff */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 93%;
 
-    --border: 210 15% 25%;
-    --input: 210 15% 25%;
-    --ring: 185 100% 35%;
+    --border: 265 40% 15%;           /* Purple border */
+    --input: 265 40% 12%;            /* Dark purple input */
+    --ring: 265 100% 69%;
 
-    /* Dark theme blog colors */
-    --blog-primary: 185 100% 35%;    /* #00ADB5 - Cyan stays primary */
+    /* Dark theme blog colors with purple background */
+    --blog-primary: 265 100% 69%;    /* #8b5fff - Purple primary */
     --blog-primary-foreground: 0 0% 100%;
     --blog-secondary: 0 0% 93%;      /* #EEEEEE - Light gray for secondary */
-    --blog-accent: 185 100% 35%;     /* #00ADB5 - Cyan accent */
+    --blog-accent: 265 100% 69%;     /* #8b5fff - Purple accent */
     --blog-accent-foreground: 0 0% 100%;
-    --blog-dark: 210 29% 17%;        /* #222831 - Dark background */
-    --blog-light: 210 15% 25%;       /* #393E46 - Medium gray for elevated surfaces */
-    --blog-muted: 210 15% 25%;
-    --blog-surface: 210 29% 17%;     /* #222831 */
-    --blog-surface-elevated: 210 15% 25%; /* #393E46 */
+    --blog-dark: 265 100% 3%;        /* rgb(6, 0, 16) - Dark purple background */
+    --blog-light: 265 40% 12%;       /* Dark purple for elevated surfaces */
+    --blog-muted: 265 40% 12%;
+    --blog-surface: 265 60% 8%;      /* Dark purple surface */
+    --blog-surface-elevated: 265 60% 8%; /* Elevated purple surface */
 
     /* Dark gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--blog-primary)), hsl(var(--blog-light)));
@@ -123,14 +134,14 @@ All colors MUST be HSL.
     --shadow-card: 0 2px 8px -2px hsl(0 0% 0% / 0.3);
     --shadow-glow: 0 0 32px hsl(var(--blog-primary) / 0.3);
     
-    --sidebar-background: 210 15% 25%;
+    --sidebar-background: 265 60% 8%;
     --sidebar-foreground: 0 0% 93%;
-    --sidebar-primary: 185 100% 35%;
+    --sidebar-primary: 265 100% 69%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 29% 17%;
+    --sidebar-accent: 265 60% 8%;
     --sidebar-accent-foreground: 0 0% 93%;
-    --sidebar-border: 210 15% 25%;
-    --sidebar-ring: 185 100% 35%;
+    --sidebar-border: 265 40% 15%;
+    --sidebar-ring: 265 100% 69%;
   }
 }
 
@@ -174,6 +185,21 @@ All colors MUST be HSL.
     box-shadow: var(--shadow-glow);
   }
 
+  /* Purple theme enhancements */
+  .purple-section-glow {
+    box-shadow: 
+      0 0 50px rgba(139, 95, 255, 0.15),
+      0 10px 30px rgba(139, 95, 255, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .purple-footer-glow {
+    box-shadow: 
+      0 -10px 40px rgba(139, 95, 255, 0.1),
+      0 -5px 20px rgba(139, 95, 255, 0.05),
+      inset 0 1px 0 rgba(139, 95, 255, 0.2);
+  }
+
   /* Story hover animation */
   .story-card {
     @apply transition-all duration-300 hover:shadow-blog-elegant hover:-translate-y-1;
@@ -191,5 +217,71 @@ All colors MUST be HSL.
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background: hsl(var(--blog-primary));
     border-radius: 3px;
+  }
+
+  /* Prism Background Animations */
+  @keyframes float-slow {
+    0%, 100% {
+      transform: translateY(0px) rotate(var(--rotation, 0deg));
+    }
+    50% {
+      transform: translateY(-20px) rotate(calc(var(--rotation, 0deg) + 5deg));
+    }
+  }
+
+  @keyframes float-medium {
+    0%, 100% {
+      transform: translateY(0px) rotate(var(--rotation, 0deg));
+    }
+    50% {
+      transform: translateY(-15px) rotate(calc(var(--rotation, 0deg) + 3deg));
+    }
+  }
+
+  @keyframes float-fast {
+    0%, 100% {
+      transform: translateY(0px) rotate(var(--rotation, 0deg));
+    }
+    50% {
+      transform: translateY(-10px) rotate(calc(var(--rotation, 0deg) + 2deg));
+    }
+  }
+
+  .animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+  }
+
+  .animate-float-medium {
+    animation: float-medium 6s ease-in-out infinite;
+  }
+
+  .animate-float-fast {
+    animation: float-fast 4s ease-in-out infinite;
+  }
+
+  /* Glass effects for dark mode */
+  .glass-header {
+    backdrop-filter: blur(20px);
+    background: rgba(6, 0, 16, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(6, 0, 16, 0.37);
+  }
+
+  .glass-nav-item {
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-nav-item:hover {
+    backdrop-filter: blur(15px);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px 0 rgba(139, 95, 255, 0.3);
+  }
+
+  .split-char,
+  .split-word,
+  .split-line {
+    display: inline-block;
+    will-change: transform, opacity;
   }
 }

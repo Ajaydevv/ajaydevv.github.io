@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { ModernButton } from "@/components/ui/modern-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -82,14 +83,15 @@ export function SignInForm() {
                 )}
               </div>
 
-              <Button 
+              <ModernButton 
                 type="submit" 
-                className="w-full blog-gradient hover:opacity-90 transition-opacity"
+                size="lg"
+                className="w-full"
                 disabled={isLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Sign in
-              </Button>
+              </ModernButton>
             </form>
 
             <div className="text-center space-y-2">
@@ -98,9 +100,6 @@ export function SignInForm() {
                 <Link to="/auth/signup" className="text-blog-primary hover:underline font-medium">
                   Sign up
                 </Link>
-              </p>
-              <p className="text-xs text-muted-foreground mt-4 p-3 bg-blog-muted/50 rounded-lg">
-                💡 <strong>Demo:</strong> Use email containing "admin" for admin access
               </p>
             </div>
           </CardContent>

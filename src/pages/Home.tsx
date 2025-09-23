@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { ModernButton } from "@/components/ui/modern-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import DarkVeil from "@/components/ui/DarkVeil";
+import SplitText from "@/components/ui/SplitText";
 import { useAuth } from "@/hooks/useAuth";
 import { storiesService, type Story } from "@/lib/database";
 import { PenTool, Heart, MessageCircle, TrendingUp, Clock, User, BookOpen, Users } from "lucide-react";
@@ -90,24 +93,49 @@ export default function Home() {
   ];
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="relative min-h-screen">
+      {/* DarkVeil Neural Network Background */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <DarkVeil
+          hueShift={270}
+          noiseIntensity={0.05}
+          scanlineIntensity={0.05}
+          speed={0.4}
+          scanlineFrequency={1.0}
+          warpAmount={0.15}
+          resolutionScale={1.0}
+        />
+        {/* Enhanced overlay for dark purple background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blog-primary/10 via-transparent to-blog-accent/8 mix-blend-screen" />
+      </div>
+      
+      {/* Content with relative positioning */}
+      <div className="relative z-10 space-y-8 animate-fade-in">
       {/* Hero Section */}
       <section className="text-center py-12 px-4">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blog-primary via-blog-accent to-blog-primary bg-clip-text text-transparent mb-6 animate-scale-in">
-            Welcome to AjayDev's Stories App
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+          <SplitText
+            text="Welcome to AjayDev's Stories App"
+            className="text-4xl md:text-6xl font-bold text-white mb-6"
+            tag="h1"
+            splitType="chars"
+            delay={300}
+            duration={0.6}
+            ease="back.out(1.7)"
+            from={{ opacity: 0, y: 50 }}
+            to={{ opacity: 1, y: 0 }}
+          />
+          <p className="text-lg md:text-xl text-foreground/90 mb-8 max-w-2xl mx-auto font-medium drop-shadow-sm">
             Discover amazing stories from our community. Feel free to leave comments and likes 
             to show your appreciation for great storytelling!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="blog-gradient hover:opacity-90 transition-opacity shadow-blog-elegant">
+            <ModernButton asChild size="lg">
               <Link to="/stories">
                 <BookOpen className="mr-2 h-5 w-5" />
                 Explore All Stories
               </Link>
-            </Button>
+            </ModernButton>
             {user ? (
               user.role === 'admin' ? (
                 <Button asChild variant="outline" size="lg" className="border-blog-primary/20 hover:bg-blog-primary/5">
@@ -118,11 +146,11 @@ export default function Home() {
                 </Button>
               ) : null
             ) : (
-              <Button asChild variant="outline" size="lg" className="border-blog-primary/20 hover:bg-blog-primary/5">
+              <ModernButton asChild variant="outline" size="lg">
                 <Link to="/auth/signup">
                   Join Our Community
                 </Link>
-              </Button>
+              </ModernButton>
             )}
           </div>
         </div>
@@ -146,7 +174,7 @@ export default function Home() {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {dashboardCards.map((stat, index) => (
-              <Card key={stat.label} className="text-center shadow-blog-card hover:shadow-blog-elegant transition-all duration-300 hover:scale-105 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+              <Card key={stat.label} className="text-center shadow-blog-card hover:shadow-blog-elegant transition-all duration-300 hover:scale-105 animate-fade-in backdrop-blur-sm bg-card/90 border-border/50" style={{ animationDelay: `${index * 0.1}s` }}>
                 <CardContent className="pt-6">
                   <stat.icon className={`w-8 h-8 mx-auto mb-2 ${stat.color}`} />
                   <div className="text-2xl font-bold text-blog-primary">{stat.value}</div>
@@ -184,7 +212,7 @@ export default function Home() {
         ) : recentStories.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {recentStories.map((story, index) => (
-              <Card key={story.id} className="story-card overflow-hidden group animate-fade-in hover:shadow-lg transition-all duration-300" style={{ animationDelay: `${index * 0.1}s` }}>
+              <Card key={story.id} className="story-card overflow-hidden group animate-fade-in hover:shadow-lg transition-all duration-300 backdrop-blur-sm bg-card/90 border-border/50" style={{ animationDelay: `${index * 0.1}s` }}>
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <Badge variant="secondary" className="text-xs">
@@ -245,7 +273,7 @@ export default function Home() {
       </section>
 
       {/* Call to Action */}
-      <section className="text-center py-12 px-4 bg-gradient-to-r from-blog-muted/50 to-blog-surface rounded-2xl">
+      <section className="text-center py-12 px-4 bg-gradient-to-r from-blog-primary/10 via-blog-surface to-blog-primary/5 rounded-2xl backdrop-blur-sm border border-blog-primary/20 shadow-[0_0_50px_rgba(139,95,255,0.15)]">
         {user ? (
           user.role === 'admin' ? (
             <>
@@ -253,12 +281,12 @@ export default function Home() {
               <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
                 As an administrator, you can create and share stories with the community!
               </p>
-              <Button asChild size="lg" className="blog-gradient hover:opacity-90 transition-opacity">
+              <ModernButton asChild size="lg">
                 <Link to="/create-story">
                   <PenTool className="mr-2 h-5 w-5" />
                   Create New Story
                 </Link>
-              </Button>
+              </ModernButton>
             </>
           ) : (
             <>
@@ -266,12 +294,12 @@ export default function Home() {
               <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
                 Enjoy reading amazing stories, leave likes and comments to show your appreciation!
               </p>
-              <Button asChild size="lg" className="blog-gradient hover:opacity-90 transition-opacity">
+              <ModernButton asChild size="lg">
                 <Link to="/stories">
                   <BookOpen className="mr-2 h-5 w-5" />
                   Explore Stories
                 </Link>
-              </Button>
+              </ModernButton>
             </>
           )
         ) : (
@@ -281,20 +309,21 @@ export default function Home() {
               Sign up today to share your thoughts, connect with other Ajaydev, and engage with amazing content!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="blog-gradient hover:opacity-90 transition-opacity">
+              <ModernButton asChild size="lg">
                 <Link to="/auth/signup">
                   Get Started Today
                 </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg">
+              </ModernButton>
+              <ModernButton asChild variant="outline" size="lg">
                 <Link to="/auth/signin">
                   Already have an account?
                 </Link>
-              </Button>
+              </ModernButton>
             </div>
           </>
         )}
       </section>
+      </div>
     </div>
   );
 }
