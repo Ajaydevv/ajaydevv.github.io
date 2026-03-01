@@ -4,7 +4,7 @@ import { Heart, MessageCircle, User, Calendar, Plus, BookOpen, Sparkles, ArrowRi
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { useAuth } from '@/hooks/useAuth';
 import { storiesService, likesService, commentsService, type Story, type Comment } from '@/lib/database';
 import { toast } from 'sonner';
@@ -142,10 +142,13 @@ export function StoriesPage() {
     }
   };
 
+  const isHtml = (str: string) => /^\s*</.test(str);
+
   const startEditing = (story: Story) => {
     setEditingStoryId(story.id);
     setEditTitle(story.title);
-    setEditContent(story.content);
+    // Wrap plain text in <p> tags so Tiptap renders it correctly
+    setEditContent(isHtml(story.content) ? story.content : `<p>${story.content.replace(/\n/g, '</p><p>')}</p>`);
   };
 
   const cancelEditing = () => {
@@ -311,12 +314,10 @@ export function StoriesPage() {
                           className="text-lg font-semibold bg-card/50 border-primary/40 focus:border-primary"
                           placeholder="Story title…"
                         />
-                        <Textarea
-                          value={editContent}
-                          onChange={(e) => setEditContent(e.target.value)}
-                          rows={6}
-                          className="bg-card/50 border-primary/40 focus:border-primary resize-none text-sm leading-relaxed placeholder:text-muted-foreground/50"
-                          placeholder="Story content…"
+                        <RichTextEditor
+                          content={editContent}
+                          onChange={setEditContent}
+                          placeholder="Write your story…"
                         />
                         <div className="flex items-center gap-2 pt-1">
                           <Button
@@ -348,11 +349,26 @@ export function StoriesPage() {
                         </Link>
 
                         {/* Content preview */}
-                        <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap">
-                          {isContentExpanded ? story.content : getStoryPreview(story.content)}
-                        </p>
+                        {isHtml(story.content) ? (
+                          <div
+                            className="story-content text-muted-foreground text-sm"
+                            dangerouslySetInnerHTML={{
+                              __html: isContentExpanded
+                                ? story.content
+                                : getStoryPreview(story.content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim())
+                            }}
+                          />
+                        ) : (
+                          <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap">
+                            {isContentExpanded ? story.content : getStoryPreview(story.content)}
+                          </p>
+                        )}
 
-                        {story.content.length > 200 && (
+                        {(() => {
+                      const plainText = isHtml(story.content)
+                        ? story.content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+                        : story.content;
+                      return plainText.length > 200 && (
                           <div className="mt-3 flex items-center gap-3">
                             <button
                               onClick={() => toggleContentExpansion(story.id)}
@@ -372,7 +388,8 @@ export function StoriesPage() {
                               </>
                             )}
                           </div>
-                        )}
+                        );
+                      })()}
                       </>
                     )}
                   </div>
