@@ -57,6 +57,9 @@ export default function Home() {
     }
   };
 
+  const getPlainText = (content: string) =>
+    content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
@@ -235,7 +238,7 @@ export default function Home() {
                     </Link>
                   </CardTitle>
                   <CardDescription className="line-clamp-3">
-                    {story.content.substring(0, 150)}...
+                    {getPlainText(story.content).substring(0, 150)}…
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-0">
