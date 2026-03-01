@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { useAuth } from '@/hooks/useAuth';
 import { storiesService } from '@/lib/database';
 import { profilesService } from '@/lib/profiles';
@@ -59,7 +59,8 @@ export function CreateStoryForm() {
       return;
     }
 
-    if (!title.trim() || !content.trim()) {
+    const plainText = content.replace(/<[^>]*>/g, '').trim();
+    if (!title.trim() || !plainText) {
       toast.error('Please fill in both title and content');
       return;
     }
@@ -161,15 +162,11 @@ export function CreateStoryForm() {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="content">Story Content</Label>
-            <Textarea
-              id="content"
-              placeholder="Write your story here..."
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              disabled={isSubmitting}
-              rows={10}
-              required
+            <Label>Story Content</Label>
+            <RichTextEditor
+              content={content}
+              onChange={setContent}
+              placeholder="Write your story here…"
             />
           </div>
           

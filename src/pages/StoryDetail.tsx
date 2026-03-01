@@ -10,6 +10,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { storiesService, likesService, commentsService, type Story, type Comment } from '@/lib/database';
 import { toast } from 'sonner';
 
+const isHtml = (str: string) => /^\s*</.test(str);
+
 export function StoryDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -174,10 +176,17 @@ export function StoryDetail() {
         </CardHeader>
         
         <CardContent>
-          <div className="prose prose-lg max-w-none dark:prose-invert mb-6">
-            <p className="text-foreground whitespace-pre-wrap leading-relaxed">
-              {story.content}
-            </p>
+          <div className="mb-6">
+            {isHtml(story.content) ? (
+              <div
+                className="story-content text-foreground leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: story.content }}
+              />
+            ) : (
+              <p className="text-foreground whitespace-pre-wrap leading-relaxed">
+                {story.content}
+              </p>
+            )}
           </div>
 
           <div className="flex items-center gap-4 mb-6">
