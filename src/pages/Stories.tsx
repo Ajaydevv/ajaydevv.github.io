@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, MessageCircle, User, Calendar, Plus, BookOpen, Sparkles, ArrowRight, Send } from 'lucide-react';
+import { Heart, MessageCircle, User, Calendar, Plus, BookOpen, Sparkles, ArrowRight, Send, Pencil, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { storiesService, likesService, commentsService, type Story, type Comment } from '@/lib/database';
@@ -16,6 +17,10 @@ export function StoriesPage() {
   const [expandedContent, setExpandedContent] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [submittingComments, setSubmittingComments] = useState<Set<string>>(new Set());
+  const [editingStoryId, setEditingStoryId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editContent, setEditContent] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -137,6 +142,41 @@ export function StoriesPage() {
     }
   };
 
+  const startEditing = (story: Story) => {
+    setEditingStoryId(story.id);
+    setEditTitle(story.title);
+    setEditContent(story.content);
+  };
+
+  const cancelEditing = () => {
+    setEditingStoryId(null);
+    setEditTitle('');
+    setEditContent('');
+  };
+
+  const handleEditSave = async (storyId: string) => {
+    const title = editTitle.trim();
+    const content = editContent.trim();
+    if (!title || !content) {
+      toast.error('Title and content cannot be empty');
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await storiesService.updateStory(storyId, { title, content });
+      setStories(prev => prev.map(s =>
+        s.id === storyId ? { ...s, title, content } : s
+      ));
+      cancelEditing();
+      toast.success('Story updated!');
+    } catch (error) {
+      console.error('Error updating story:', error);
+      toast.error('Failed to update story');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const toggleContentExpansion = (storyId: string) => {
     setExpandedContent(prev => {
       const next = new Set(prev);
@@ -231,6 +271,8 @@ export function StoriesPage() {
             {stories.map((story) => {
               const isExpanded = expandedStories.has(story.id);
               const isContentExpanded = expandedContent.has(story.id);
+              const isEditing = editingStoryId === story.id;
+              const isOwner = user?.id === story.author_id;
 
               return (
                 <article
@@ -246,49 +288,97 @@ export function StoriesPage() {
                       <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/80 to-purple-700 flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-[0_0_12px_hsl(var(--primary)/0.4)]">
                         {(story.author_name ?? 'A').charAt(0).toUpperCase()}
                       </div>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium leading-none truncate">{story.author_name}</p>
                         <p className="text-xs text-muted-foreground mt-0.5">{formatDate(story.created_at)}</p>
                       </div>
+                      {isOwner && !isEditing && (
+                        <button
+                          onClick={() => startEditing(story)}
+                          className="opacity-0 group-hover:opacity-100 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                          Edit
+                        </button>
+                      )}
                     </div>
 
-                    {/* Title */}
-                    <Link to={`/story/${story.id}`} className="block group/title">
-                      <h2 className="text-xl font-semibold leading-snug group-hover/title:text-primary transition-colors duration-200 mb-3">
-                        {story.title}
-                      </h2>
-                    </Link>
-
-                    {/* Content preview */}
-                    <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap">
-                      {isContentExpanded ? story.content : getStoryPreview(story.content)}
-                    </p>
-
-                    {story.content.length > 200 && (
-                      <div className="mt-3 flex items-center gap-3">
-                        <button
-                          onClick={() => toggleContentExpansion(story.id)}
-                          className="text-primary text-sm font-medium hover:underline underline-offset-2 transition-colors"
-                        >
-                          {isContentExpanded ? 'Show less' : 'Read more'}
-                        </button>
-                        {!isContentExpanded && (
-                          <>
-                            <span className="text-border">·</span>
-                            <Link
-                              to={`/story/${story.id}`}
-                              className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
-                            >
-                              Full story <ArrowRight className="w-3 h-3" />
-                            </Link>
-                          </>
-                        )}
+                    {isEditing ? (
+                      <div className="space-y-3">
+                        <Input
+                          value={editTitle}
+                          onChange={(e) => setEditTitle(e.target.value)}
+                          className="text-lg font-semibold bg-card/50 border-primary/40 focus:border-primary"
+                          placeholder="Story title…"
+                        />
+                        <Textarea
+                          value={editContent}
+                          onChange={(e) => setEditContent(e.target.value)}
+                          rows={6}
+                          className="bg-card/50 border-primary/40 focus:border-primary resize-none text-sm leading-relaxed placeholder:text-muted-foreground/50"
+                          placeholder="Story content…"
+                        />
+                        <div className="flex items-center gap-2 pt-1">
+                          <Button
+                            size="sm"
+                            onClick={() => handleEditSave(story.id)}
+                            disabled={isSaving || !editTitle.trim() || !editContent.trim()}
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground h-8 px-3 text-xs shadow-[0_0_12px_hsl(var(--primary)/0.25)] disabled:shadow-none"
+                          >
+                            <Check className="w-3.5 h-3.5 mr-1.5" />
+                            {isSaving ? 'Saving…' : 'Save'}
+                          </Button>
+                          <button
+                            onClick={cancelEditing}
+                            disabled={isSaving}
+                            className="flex items-center gap-1.5 px-3 h-8 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all disabled:opacity-40"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                            Cancel
+                          </button>
+                        </div>
                       </div>
+                    ) : (
+                      <>
+                        {/* Title */}
+                        <Link to={`/story/${story.id}`} className="block group/title">
+                          <h2 className="text-xl font-semibold leading-snug group-hover/title:text-primary transition-colors duration-200 mb-3">
+                            {story.title}
+                          </h2>
+                        </Link>
+
+                        {/* Content preview */}
+                        <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap">
+                          {isContentExpanded ? story.content : getStoryPreview(story.content)}
+                        </p>
+
+                        {story.content.length > 200 && (
+                          <div className="mt-3 flex items-center gap-3">
+                            <button
+                              onClick={() => toggleContentExpansion(story.id)}
+                              className="text-primary text-sm font-medium hover:underline underline-offset-2 transition-colors"
+                            >
+                              {isContentExpanded ? 'Show less' : 'Read more'}
+                            </button>
+                            {!isContentExpanded && (
+                              <>
+                                <span className="text-border">·</span>
+                                <Link
+                                  to={`/story/${story.id}`}
+                                  className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+                                >
+                                  Full story <ArrowRight className="w-3 h-3" />
+                                </Link>
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
 
-                  {/* Action bar */}
-                  <div className="px-6 py-3 border-t border-border/40 flex items-center gap-1">
+                  {/* Action bar — hidden while editing */}
+                  {!isEditing && <div className="px-6 py-3 border-t border-border/40 flex items-center gap-1">
                     <button
                       onClick={() => handleLike(story.id, story.user_liked || false)}
                       disabled={!user}
@@ -322,7 +412,7 @@ export function StoriesPage() {
                         View <ArrowRight className="w-3 h-3" />
                       </Link>
                     </div>
-                  </div>
+                  </div>}
 
                   {/* Comments panel */}
                   {isExpanded && (
