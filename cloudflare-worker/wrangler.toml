@@ -1,0 +1,12 @@
+name = "supabase-proxy"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+
+# After running `wrangler deploy`, you'll get a URL like:
+#   https://supabase-proxy.<your-subdomain>.workers.dev
+#
+# Copy that URL into your project's .env file:
+#   VITE_SUPABASE_PROXY_URL=https://supabase-proxy.<your-subdomain>.workers.dev
+#
+# Then redeploy the site:
+#   npm run deploy  (from the project root)
