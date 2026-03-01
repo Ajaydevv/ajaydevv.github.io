@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, MessageCircle, User, Calendar, Plus } from 'lucide-react';
+import { Heart, MessageCircle, User, Calendar, Plus, BookOpen, Sparkles, ArrowRight, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { storiesService, likesService, commentsService, type Story, type Comment } from '@/lib/database';
@@ -168,179 +166,228 @@ export function StoriesPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">Loading stories...</div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+          <p className="text-muted-foreground text-sm tracking-wide">Loading stories…</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold">Stories</h1>
-          <p className="text-muted-foreground">Discover and share amazing stories</p>
-        </div>
-        {user && (
-          <Button asChild>
-            <Link to="/create-story">
-              <Plus className="w-4 h-4 mr-2" />
-              Create Story
-            </Link>
-          </Button>
-        )}
-      </div>
-
-      {stories.length === 0 ? (
-        <Card>
-          <CardContent className="text-center py-8">
-            <p className="text-muted-foreground mb-4">Ajayadev is cooking one. no stories yet!</p>
+    <div className="min-h-screen">
+      {/* Hero header */}
+      <div className="relative overflow-hidden border-b border-border/50">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-purple-900/20 pointer-events-none" />
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="container mx-auto px-4 py-12">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-primary text-sm font-medium tracking-widest uppercase">
+                <Sparkles className="w-4 h-4" />
+                Community
+              </div>
+              <h1 className="text-4xl sm:text-5xl font-bold tracking-tight bg-gradient-to-br from-foreground via-foreground/90 to-muted-foreground bg-clip-text text-transparent">
+                Stories
+              </h1>
+              <p className="text-muted-foreground max-w-md">
+                Discover and share amazing stories from the community.
+              </p>
+            </div>
             {user && (
-              <Button asChild>
-                <Link to="/create-story">Create Your First Story</Link>
+              <Button
+                asChild
+                className="group bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_20px_hsl(var(--primary)/0.3)] hover:shadow-[0_0_32px_hsl(var(--primary)/0.5)] transition-all duration-300 self-start sm:self-auto"
+              >
+                <Link to="/create-story">
+                  <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-300" />
+                  New Story
+                </Link>
               </Button>
             )}
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-6">
-          {stories.map((story) => (
-            <Card key={story.id}>
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div className="space-y-2 flex-1">
-                    <Link to={`/story/${story.id}`}>
-                      <CardTitle className="text-xl hover:text-blog-primary transition-colors cursor-pointer">
-                        {story.title}
-                      </CardTitle>
-                    </Link>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <User className="w-4 h-4" />
-                        {story.author_name}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {formatDate(story.created_at)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-4">
-                  <p className="text-foreground whitespace-pre-wrap">
-                    {expandedContent.has(story.id) ? story.content : getStoryPreview(story.content)}
-                  </p>
-                  {story.content.length > 200 && (
-                    <div className="mt-2 flex items-center gap-2">
-                      <Button
-                        variant="link"
-                        size="sm"
-                        onClick={() => toggleContentExpansion(story.id)}
-                        className="p-0 h-auto text-blog-primary hover:text-blog-accent"
-                      >
-                        {expandedContent.has(story.id) ? 'Show less' : 'Read more'}
-                      </Button>
-                      {!expandedContent.has(story.id) && (
-                        <span className="text-muted-foreground">•</span>
-                      )}
-                      {!expandedContent.has(story.id) && (
-                        <Link 
-                          to={`/story/${story.id}`}
-                          className="text-blog-primary hover:text-blog-accent text-sm"
-                        >
-                          View full story →
-                        </Link>
-                      )}
-                    </div>
-                  )}
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleLike(story.id, story.user_liked || false)}
-                      className="flex items-center gap-1"
-                      disabled={!user}
-                    >
-                      <Heart 
-                        className={`w-4 h-4 ${story.user_liked ? 'fill-red-500 text-red-500' : ''}`} 
-                      />
-                      {story.likes_count || 0}
-                    </Button>
-                    
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleStoryExpansion(story.id)}
-                      className="flex items-center gap-1"
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                      {story.comments_count || 0}
-                    </Button>
-                  </div>
-                </div>
+          </div>
+        </div>
+      </div>
 
-                {expandedStories.has(story.id) && (
-                  <>
-                    <Separator className="my-4" />
-                    
-                    {/* Add comment section */}
-                    {user && (
-                      <div className="space-y-2 mb-4">
-                        <Textarea
-                          placeholder="Write a comment..."
-                          value={newComments[story.id] || ''}
-                          onChange={(e) => setNewComments(prev => ({ 
-                            ...prev, 
-                            [story.id]: e.target.value 
-                          }))}
-                          rows={2}
-                        />
-                        <Button
-                          size="sm"
-                          onClick={() => handleComment(story.id)}
-                          disabled={submittingComments.has(story.id) || !newComments[story.id]?.trim()}
+      <div className="container mx-auto px-4 py-10">
+        {stories.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 gap-6 text-center">
+            <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+              <BookOpen className="w-9 h-9 text-primary/60" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-xl font-semibold">Something's brewing…</h2>
+              <p className="text-muted-foreground max-w-xs">Ajayadev is cooking one. No stories yet — be the first!</p>
+            </div>
+            {user && (
+              <Button asChild className="bg-primary hover:bg-primary/90 shadow-[0_0_20px_hsl(var(--primary)/0.3)]">
+                <Link to="/create-story">Create your first story</Link>
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-5 max-w-3xl mx-auto">
+            {stories.map((story) => {
+              const isExpanded = expandedStories.has(story.id);
+              const isContentExpanded = expandedContent.has(story.id);
+
+              return (
+                <article
+                  key={story.id}
+                  className="group relative rounded-2xl border border-border/50 bg-card/60 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:border-primary/30 hover:shadow-[0_0_40px_hsl(var(--primary)/0.08)]"
+                >
+                  {/* Top gradient accent line */}
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  <div className="p-6 pb-4">
+                    {/* Author row */}
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/80 to-purple-700 flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-[0_0_12px_hsl(var(--primary)/0.4)]">
+                        {(story.author_name ?? 'A').charAt(0).toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium leading-none truncate">{story.author_name}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{formatDate(story.created_at)}</p>
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <Link to={`/story/${story.id}`} className="block group/title">
+                      <h2 className="text-xl font-semibold leading-snug group-hover/title:text-primary transition-colors duration-200 mb-3">
+                        {story.title}
+                      </h2>
+                    </Link>
+
+                    {/* Content preview */}
+                    <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap">
+                      {isContentExpanded ? story.content : getStoryPreview(story.content)}
+                    </p>
+
+                    {story.content.length > 200 && (
+                      <div className="mt-3 flex items-center gap-3">
+                        <button
+                          onClick={() => toggleContentExpansion(story.id)}
+                          className="text-primary text-sm font-medium hover:underline underline-offset-2 transition-colors"
                         >
-                          {submittingComments.has(story.id) ? 'Posting...' : 'Post Comment'}
-                        </Button>
+                          {isContentExpanded ? 'Show less' : 'Read more'}
+                        </button>
+                        {!isContentExpanded && (
+                          <>
+                            <span className="text-border">·</span>
+                            <Link
+                              to={`/story/${story.id}`}
+                              className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+                            >
+                              Full story <ArrowRight className="w-3 h-3" />
+                            </Link>
+                          </>
+                        )}
                       </div>
                     )}
+                  </div>
 
-                    {/* Comments list */}
-                    <div className="space-y-3">
-                      {comments[story.id]?.map((comment) => (
-                        <div key={comment.id} className="bg-muted/50 dark:bg-blog-surface-elevated rounded-lg p-3 border border-border">
-                          <div className="flex items-center justify-between mb-2">
-                            <Badge variant="secondary" className="text-xs">
-                              {comment.user_name}
-                            </Badge>
-                            <span className="text-xs text-muted-foreground">
-                              {formatDate(comment.created_at)}
-                            </span>
-                          </div>
-                          <p className="text-sm text-foreground whitespace-pre-wrap">
-                            {comment.content}
-                          </p>
-                        </div>
-                      ))}
-                      
-                      {comments[story.id]?.length === 0 && (
-                        <p className="text-center text-muted-foreground text-sm py-4">
-                          No comments yet. Be the first to comment!
-                        </p>
-                      )}
+                  {/* Action bar */}
+                  <div className="px-6 py-3 border-t border-border/40 flex items-center gap-1">
+                    <button
+                      onClick={() => handleLike(story.id, story.user_liked || false)}
+                      disabled={!user}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed
+                        ${story.user_liked
+                          ? 'text-red-400 bg-red-500/10 hover:bg-red-500/20'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+                        }`}
+                    >
+                      <Heart className={`w-4 h-4 transition-transform duration-150 ${story.user_liked ? 'fill-red-400 scale-110' : ''}`} />
+                      <span>{story.likes_count || 0}</span>
+                    </button>
+
+                    <button
+                      onClick={() => toggleStoryExpansion(story.id)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200
+                        ${isExpanded
+                          ? 'text-primary bg-primary/10'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+                        }`}
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span>{story.comments_count || 0}</span>
+                    </button>
+
+                    <div className="ml-auto">
+                      <Link
+                        to={`/story/${story.id}`}
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-200"
+                      >
+                        View <ArrowRight className="w-3 h-3" />
+                      </Link>
                     </div>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+                  </div>
+
+                  {/* Comments panel */}
+                  {isExpanded && (
+                    <div className="border-t border-border/40 bg-black/20 px-6 py-5 space-y-4">
+                      {user && (
+                        <div className="flex gap-3">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/60 to-purple-700 flex items-center justify-center text-xs font-bold text-white shrink-0">
+                            {(user.name ?? 'Y').charAt(0).toUpperCase()}
+                          </div>
+                          <div className="flex-1 space-y-2">
+                            <Textarea
+                              placeholder="Write a comment…"
+                              value={newComments[story.id] || ''}
+                              onChange={(e) => setNewComments(prev => ({
+                                ...prev,
+                                [story.id]: e.target.value
+                              }))}
+                              rows={2}
+                              className="bg-card/50 border-border/50 focus:border-primary/50 resize-none text-sm placeholder:text-muted-foreground/50 transition-colors"
+                            />
+                            <Button
+                              size="sm"
+                              onClick={() => handleComment(story.id)}
+                              disabled={submittingComments.has(story.id) || !newComments[story.id]?.trim()}
+                              className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs h-8 px-3 shadow-[0_0_12px_hsl(var(--primary)/0.25)] disabled:shadow-none transition-all"
+                            >
+                              <Send className="w-3 h-3 mr-1.5" />
+                              {submittingComments.has(story.id) ? 'Posting…' : 'Post'}
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="space-y-3">
+                        {comments[story.id]?.length === 0 && (
+                          <p className="text-center text-muted-foreground/60 text-xs py-3 tracking-wide">
+                            No comments yet — start the conversation.
+                          </p>
+                        )}
+                        {comments[story.id]?.map((comment) => (
+                          <div
+                            key={comment.id}
+                            className="flex gap-3"
+                          >
+                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-muted to-card border border-border/60 flex items-center justify-center text-xs font-semibold text-muted-foreground shrink-0">
+                              {(comment.user_name ?? '?').charAt(0).toUpperCase()}
+                            </div>
+                            <div className="flex-1 min-w-0 bg-card/40 rounded-xl px-4 py-3 border border-border/30">
+                              <div className="flex items-baseline justify-between gap-2 mb-1">
+                                <span className="text-xs font-semibold text-foreground/80 truncate">{comment.user_name}</span>
+                                <span className="text-xs text-muted-foreground/60 shrink-0">{formatDate(comment.created_at)}</span>
+                              </div>
+                              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{comment.content}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
