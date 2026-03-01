@@ -40,7 +40,7 @@ export function useAuthProvider(): AuthContextType {
       try {
         // Add timeout to prevent hanging
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Auth initialization timeout')), 15000)
+          setTimeout(() => reject(new Error('Auth initialization timeout')), 9000)
         );
         
         const sessionPromise = supabase.auth.getSession().then(async ({ data: { session } }) => {
@@ -85,7 +85,7 @@ export function useAuthProvider(): AuthContextType {
     try {
       // Add timeout to prevent hanging on profile fetch
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Profile fetch timeout')), 10000)
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 9000)
       );
       
       const profilePromise = supabase

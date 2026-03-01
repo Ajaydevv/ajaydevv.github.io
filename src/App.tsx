@@ -21,7 +21,12 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes
-      retry: 2,
+      // Don't retry on network errors (e.g. Supabase project paused);
+      // retry once for transient server errors.
+      retry: (failureCount, error: any) =>
+        error?.message?.includes('Cannot reach') || error?.message?.includes('timed out')
+          ? false
+          : failureCount < 1,
     },
   },
 });
